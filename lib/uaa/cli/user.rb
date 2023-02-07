@@ -19,7 +19,7 @@ class UserCli < CommonCli
 
   topic 'User Accounts', 'account'
 
-  define_option :origin, '--origin <name>, select user to update by identity provider origin. Defaults to UAA'
+  define_option :origin, '--origin <name> select user to update by identity provider origin. Defaults to UAA'
   define_option :givenName, '--given_name <name>'
   define_option :familyName, '--family_name <name>'
   define_option :emails, '--emails <addresses>'
@@ -57,12 +57,14 @@ class UserCli < CommonCli
   end
 
   define_option :del_attrs, '--del_attrs <attr_names>', 'list of attributes to delete'
+  define_option :new_origin, '--new_origin <name>, Migrate user to new identity provider origin.'
   desc 'user update [name]', 'Update a user account with specified options',
       *USER_INFO_OPTS, :del_attrs do |name|
     return say 'no user updates specified' if (updates = user_opts).empty?
     pp scim_request { |ua|
       info = scim_get_user_object(ua, :user, username(name), opts[:origin])
       opts[:del_attrs].each { |a| info.delete(a.to_s) } if opts[:del_attrs]
+      info[:origin] = opts[:new_origin] if opts[:new_origin]
       ua.put(:user, info.merge(updates))
       'user account successfully updated'
     }
