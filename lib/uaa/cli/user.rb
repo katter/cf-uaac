@@ -57,7 +57,7 @@ class UserCli < CommonCli
   end
 
   define_option :del_attrs, '--del_attrs <attr_names>', 'list of attributes to delete'
-  define_option :new_origin, '--new_origin <name>, Migrate user to new identity provider origin.'
+  define_option :new_origin, '--new_origin <name>', 'Migrate user to new identity provider origin.'
   desc 'user update [name]', 'Update a user account with specified options',
       *USER_INFO_OPTS, :del_attrs do |name|
     return say 'no user updates specified' if (updates = user_opts).empty?

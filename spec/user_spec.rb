@@ -100,6 +100,20 @@ describe UserCli do
     Cli.run("user delete #{user_with_origin} --origin ldap")
   end
 
+  it 'really updates origin when specified' do
+    user_with_origin = "#{@test_user}_with_origin"
+    create_user_by_origin( user_with_origin, 'ldap')
+
+    Cli.run("user update #{user_with_origin} --origin ldap --given_name snoopy")
+    Cli.run("user update #{user_with_origin} --origin ldap --new_origin saml")
+
+
+    returned_user = Cli.run("user get #{user_with_origin.upcase} --origin saml")
+    returned_user['origin'].should match 'saml'
+    returned_user['name']['givenname'].should match 'snoopy'
+    Cli.run("user delete #{user_with_origin} --origin saml")
+  end
+
   it 'gets user when origin specified' do
     user_with_diff_origin = "same_username_with_two_origins"
     create_user_by_origin( user_with_diff_origin, 'ldap')
